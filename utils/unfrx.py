@@ -59,7 +59,7 @@ def main():
                 dataType = checkDataType(data)
 
         # Determine data
-        if dataType:
+        if dataType and dataSize > 0:
             # Save the data.
             fn = "unfrx_%s_%s.%s" % (frxBase, offset, dataType)
             f = open(fn, 'wb')
@@ -84,8 +84,23 @@ def checkDataType(data):
         return "jpg"
     elif ("BM", len(data)) == struct.unpack_from("<2sI", data, 0):
         return "bmp"
+    elif (0x0000, 0x0001) == struct.unpack_from("<2H", data, 0) or (0x0000, 0x0002) == struct.unpack_from("<2H", data, 0):
+        c = struct.unpack_from("<H", data, 4)[0]
+        o = struct.calcsize("<3H") + c * struct.calcsize("<4B2H2I") #ICONDIRENTRY
+        s = struct.unpack_from("<I", data, o)[0]
+        if struct.calcsize("<IiiHHIIiiII") == s: #BITMAPINFOHEADER
+            return "ico"
+    elif (0x0000, 0x0002) == struct.unpack_from("<2H", data, 0):
+        c = struct.unpack_from("<H", data, 4)[0]
+        o = struct.calcsize("<3H") + c * struct.calcsize("<4B2H2I") #ICONDIRENTRY
+        s = struct.unpack_from("<I", data, o)[0]
+        if struct.calcsize("<IiiHHIIiiII") == s: #BITMAPINFOHEADER
+            return "cur"
+    elif ("{\\rtf1",) == struct.unpack_from("6s", data, 0):
+        return "rtf"
     else:
-        print >> sys.stderr, "Unsupported format: 0x%02X,0x%02X,0x%02X,0x%02X" % struct.unpack_from("<4B", data, 0)
+        print >> sys.stderr, "Unsupported format: 0x%02X,0x%02X,0x%02X,0x%02X,0x%02X,0x%02X" % struct.unpack_from("<6B", data, 0)
+        return "blob"
 
 if __name__ == "__main__":
     main()
