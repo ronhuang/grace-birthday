@@ -48,7 +48,7 @@ def main():
         # parse header (type III) with only data size
         testSize = struct.calcsize("<I")
         if headerType is None and testSize < len(frxData) - offset:
-            (dataSize) = struct.unpack_from("<I", frxData, offset)
+            (dataSize,) = struct.unpack_from("<I", frxData, offset)
             headerSize = testSize
             headerType = 3
 
@@ -80,12 +80,12 @@ def checkDataType(data):
 
     if ("GIF",) == struct.unpack_from("<3s", data, 0) and (";",) == struct.unpack_from("<c", data, len(data) - 1):
         return "gif"
-    elif 0xD8FF == struct.unpack_from("<H", data, 0) and 0xD9FF == struct.unpack_from("<H", data, len(data) - 2):
+    elif (0xD8FF,) == struct.unpack_from("<H", data, 0) and (0xD9FF,) == struct.unpack_from("<H", data, len(data) - 2):
         return "jpg"
     elif ("BM", len(data)) == struct.unpack_from("<2sI", data, 0):
         return "bmp"
     else:
-        print >> sys.stderr, "Unsupported format: %s" % (data[:4])
+        print >> sys.stderr, "Unsupported format: 0x%02X,0x%02X,0x%02X,0x%02X" % struct.unpack_from("<4B", data, 0)
 
 if __name__ == "__main__":
     main()
