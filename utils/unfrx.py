@@ -26,6 +26,8 @@ def main():
         headerType = None
         dataType = None
         data = None
+        headerSize = 0
+        dataSize = 0
 
         # parse header (type I) with entry size
         testSize = struct.calcsize("<3I")
@@ -37,7 +39,7 @@ def main():
 
         # parse header (type II) with entry size and guid
         testSize = struct.calcsize("<I16sII")
-        if 0 == headerType and testSize < len(frxData) - offset:
+        if headerType is None and testSize < len(frxData) - offset:
             (entrySize, guid, magic, dataSize) = struct.unpack_from("<I16sII", frxData, offset)
             if (entrySize - dataSize + 4) == testSize and MAGIC == magic:
                 headerSize = testSize
@@ -45,7 +47,7 @@ def main():
 
         # parse header (type III) with only data size
         testSize = struct.calcsize("<I")
-        if 0 == headerType and testSize < len(frxData) - offset:
+        if headerType is None and testSize < len(frxData) - offset:
             (dataSize) = struct.unpack_from("<I", frxData, offset)
             headerSize = testSize
             headerType = 3
@@ -66,8 +68,7 @@ def main():
             print "Wrote to %s" % (fn)
 
             offset += headerSize + dataSize
-        elif headerType == 1 and dataSize == 0:
-            # No icon
+        elif headerType:
             offset += headerSize + dataSize
         else:
             # No valid data type found
@@ -84,7 +85,7 @@ def checkDataType(data):
     elif ("BM", len(data)) == struct.unpack_from("<2sI", data, 0):
         return "bmp"
     else:
-        print >> sys.stderr, "Unsupported format: %S" % (data[:4])
+        print >> sys.stderr, "Unsupported format: %s" % (data[:4])
 
 if __name__ == "__main__":
     main()
