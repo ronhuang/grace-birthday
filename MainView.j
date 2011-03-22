@@ -13,6 +13,9 @@
     CPButton closeButton;
     CPButton printButton;
     CPButton musicButton;
+
+    CPTextField imageNameLabel;
+    CPImageView imageView;
 }
 
 - (void)init
@@ -100,6 +103,21 @@
     [caption setStringValue:@"欣賞區"];
     [caption sizeToFit];
     [detailView addSubview:caption];
+
+    /* RichTextBox1 */
+    imageNameLabel = [[CPTextField alloc] initWithFrame:CGRectMake(16, 24, 257, 25)];
+    [imageNameLabel setStringValue:@"1234567890"];
+    [imageNameLabel setToolTip:@"所看圖案的名稱"];
+    [imageNameLabel setFont:[CPFont systemFontOfSize:16.0]];
+    [detailView addSubview:imageNameLabel];
+
+    /* Image1 */
+    var rect = CGRectMake(16, 64, 257, 257);
+    var view = [[CPBox alloc] initWithFrame:CGRectInset(rect, 1, 1)];
+    imageView = [[CPImageView alloc] initWithFrame:rect];
+    [imageView setToolTip:@"按一下可以看到全圖，不過會不好看"];
+    [view addSubview:imageView];
+    [detailView addSubview:view];
 
     return detailView;
 }
