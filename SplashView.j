@@ -10,7 +10,6 @@ SplashTimeoutNotification = @"SplashTimeoutNotification";
     CPBox frameView;
     CPTimer timer;
     CPImageView logoView;
-    CPImage logoImage;
     CPTextField companyLabel;
     CPTextField versionLabel;
     CPTextField platformLabel;
@@ -38,9 +37,9 @@ SplashTimeoutNotification = @"SplashTimeoutNotification";
         /* imgLogo */
         var mainBundle = [CPBundle mainBundle];
         var path = [mainBundle pathForResource:@"splash.gif"];
-        logoImage = [[CPImage alloc] initWithContentsOfFile:path size:CGSizeMake(145, 220)];
+        var image = [[CPImage alloc] initWithContentsOfFile:path size:CGSizeMake(145, 220)];
         logoView = [[CPImageView alloc] initWithFrame:CGRectMake(24, 29, 145, 220)];
-        [logoView setImage:logoImage];
+        [logoView setImage:image];
         [frameView addSubview:logoView];
 
         /* lblCompany */
