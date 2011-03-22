@@ -7,33 +7,53 @@
  */
 
 @import <Foundation/CPObject.j>
+@import "SplashView.j"
+@import "MainView.j"
 
 
 @implementation AppController : CPObject
 {
+    CPView contentView;
+    SplashView splashView;
+    MainView mainView;
 }
 
 - (void)applicationDidFinishLaunching:(CPNotification)aNotification
 {
-    var theWindow = [[CPWindow alloc] initWithContentRect:CGRectMakeZero() styleMask:CPBorderlessBridgeWindowMask],
+    var theWindow = [[CPWindow alloc] initWithContentRect:CGRectMakeZero() styleMask:CPBorderlessBridgeWindowMask];
+
+    if (!contentView)
         contentView = [theWindow contentView];
 
-    var label = [[CPTextField alloc] initWithFrame:CGRectMakeZero()];
+    /* Show splash screen. */
+    if (!splashView)
+    {
+        splashView = [[SplashView alloc] init];
+        [splashView setAutoresizingMask:CPViewMinXMargin | CPViewMaxXMargin | CPViewMinYMargin | CPViewMaxYMargin];
+        [splashView setCenter:[contentView center]];
+    }
+    [contentView addSubview:splashView];
 
-    [label setStringValue:@"Hello World!"];
-    [label setFont:[CPFont boldSystemFontOfSize:24.0]];
+    /* Handle splash close */
+    [[CPNotificationCenter defaultCenter]
+        addObserver:self
+           selector:@selector(advance:)
+               name:SplashTimeoutNotification
+             object:nil];
 
-    [label sizeToFit];
-
-    [label setAutoresizingMask:CPViewMinXMargin | CPViewMaxXMargin | CPViewMinYMargin | CPViewMaxYMargin];
-    [label setCenter:[contentView center]];
-
-    [contentView addSubview:label];
-
+    /*  */
     [theWindow orderFront:self];
+}
 
-    // Uncomment the following line to turn on the standard menu bar.
-    //[CPMenu setMenuBarVisible:YES];
+- (void)advance:(CPNotification)aNotification
+{
+    if (!mainView)
+    {
+        mainView = [[MainView alloc] init];
+        [mainView setAutoresizingMask:CPViewMinXMargin | CPViewMaxXMargin | CPViewMinYMargin | CPViewMaxYMargin];
+        [mainView setCenter:[contentView center]];
+    }
+    [contentView replaceSubview:splashView with:mainView];
 }
 
 @end
