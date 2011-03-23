@@ -16,6 +16,9 @@
 
     CPTextField imageNameLabel;
     CPImageView imageView;
+
+    CPView fileList;
+    CPView dirList;
 }
 
 - (void)init
@@ -29,12 +32,13 @@
         /* Frame3, Frame2, Frame1 */
         [self addSubview:[self buildControlView]];
         [self addSubview:[self buildDetailView]];
-        [self addSubview:[self buildbrowseView]];
+        [self addSubview:[self buildBrowseView]];
     }
 
     return self;
 }
 
+/* Frame3 */
 - (CPView)buildControlView
 {
     var controlView = [[CPBox alloc] initWithFrame:CGRectMake(8, 352, 609, 89)];
@@ -89,6 +93,7 @@
     return controlView;
 }
 
+/* Frame2 */
 - (CPView)buildDetailView
 {
     var detailView = [[CPBox alloc] initWithFrame:CGRectMake(328, 8, 289, 337)];
@@ -122,7 +127,8 @@
     return detailView;
 }
 
-- (CPView)buildbrowseView
+/* Frame1 */
+- (CPView)buildBrowseView
 {
     var browseView = [[CPBox alloc] initWithFrame:CGRectMake(8, 8, 309, 337)];
     var mainBundle = [CPBundle mainBundle];
@@ -136,6 +142,38 @@
     [caption setStringValue:@"檔案區"];
     [caption sizeToFit];
     [browseView addSubview:caption];
+
+    /* File1 */
+    fileList = [[CPBox alloc] initWithFrame:CGRectMake(176, 24, 121, 292)];
+    [browseView addSubview:fileList];
+
+    /* Dir1 */
+    dirList = [[CPBox alloc] initWithFrame:CGRectMake(16, 24, 145, 201)];
+    [browseView addSubview:dirList];
+
+    /* Image6 */
+    var path = [mainBundle pathForResource:@"right.bmp"];
+    var image = [[CPImage alloc] initWithContentsOfFile:path size:CGSizeMake(17, 19)];
+    var view = [[CPImageView alloc] initWithFrame:CGRectMake(16, 264, 17, 19)];
+    [view setImage:image];
+    [browseView addSubview:view];
+
+    /* Image5 */
+    var path = [mainBundle pathForResource:@"up.bmp"];
+    var image = [[CPImage alloc] initWithContentsOfFile:path size:CGSizeMake(19, 17)];
+    var view = [[CPImageView alloc] initWithFrame:CGRectMake(16, 232, 19, 17)];
+    [view setImage:image];
+    [browseView addSubview:view];
+
+    /* Label2 */
+    var label = [[CPTextField alloc] initWithFrame:CGRectMake(40, 264, 97, 17)];
+    [label setStringValue:@"選擇要看的檔案"];
+    [browseView addSubview:label];
+
+    /* Label1 */
+    var label = [[CPTextField alloc] initWithFrame:CGRectMake(40, 232, 105, 17)];
+    [label setStringValue:@"選擇要看的目錄"];
+    [browseView addSubview:label];
 
     return browseView;
 }
