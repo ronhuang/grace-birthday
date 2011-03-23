@@ -48,6 +48,10 @@
         [self addSubview:[self buildControlView]];
         [self addSubview:[self buildDetailView]];
         [self addSubview:[self buildBrowseView]];
+
+        /* Menu */
+        [CPApp setMainMenu:[self buildMenu]];
+        [CPMenu setMenuBarVisible:YES];
     }
 
     return self;
@@ -94,7 +98,7 @@
     [closeButton setImagePosition:CPImageOnly];
     [closeButton setImage:image];
     [closeButton setTarget:self];
-    [closeButton setTarget:@selector(close)];
+    [closeButton setAction:@selector(exit)];
     [closeButton setToolTip:@"按一下就會結束此程式"];
     [controlView addSubview:closeButton];
 
@@ -106,7 +110,7 @@
     [printButton setImagePosition:CPImageOnly];
     [printButton setImage:image];
     [printButton setTarget:self];
-    [printButton setTarget:@selector(print)];
+    [printButton setAction:@selector(print)];
     [printButton setToolTip:@"按一下就可以列印欣賞區的圖案"];
     [controlView addSubview:printButton];
 
@@ -118,7 +122,7 @@
     [musicButton setImagePosition:CPImageOnly];
     [musicButton setImage:image];
     [musicButton setTarget:self];
-    [musicButton setTarget:@selector(music)];
+    [musicButton setAction:@selector(music)];
     [musicButton setToolTip:@"按一下就可以聽音樂"];
     [controlView addSubview:musicButton];
 
@@ -210,16 +214,64 @@
     return browseView;
 }
 
-- (void)close
+- (CPMenu)buildMenu
 {
+    var fileMenu = [[CPMenu alloc] initWithTitle:@"檔案"];
+
+    var musicItem = [[CPMenuItem alloc] initWithTitle:@"音樂" action:@selector(music) keyEquivalent:@"m"];
+    [musicItem setTarget:self];
+    [fileMenu addItem:musicItem];
+
+    var printItem = [[CPMenuItem alloc] initWithTitle:@"列印" action:@selector(print) keyEquivalent:@"p"];
+    [printItem setTarget:self];
+    [fileMenu addItem:printItem];
+
+    [fileMenu addItem:[CPMenuItem separatorItem]];
+
+    var exitItem = [[CPMenuItem alloc] initWithTitle:@"結束" action:@selector(exit) keyEquivalent:@"e"];
+    [exitItem setTarget:self];
+    [fileMenu addItem:exitItem];
+
+    var fileItem = [[CPMenuItem alloc] initWithTitle:@"檔案" action:@selector(music) keyEquivalent:@"f"]
+    [fileItem setSubmenu:fileMenu];
+
+    var rootMenu = [[CPMenu alloc] initWithTitle:@"Root"];
+    [rootMenu addItem:fileItem];
+
+    var aboutItem = [[CPMenuItem alloc] initWithTitle:@"關於" action:@selector(about) keyEquivalent:@"a"];
+    [aboutItem setTarget:self];
+    [rootMenu addItem:aboutItem];
+
+    var sorryItem = [[CPMenuItem alloc] initWithTitle:@"對不起" action:@selector(sorry) keyEquivalent:@"s"];
+    [sorryItem setTarget:self];
+    [rootMenu addItem:sorryItem];
+
+    return rootMenu;
+}
+
+- (void)exit
+{
+    CPLog.trace(@"exit");
 }
 
 - (void)print
 {
+    CPLog.trace(@"print");
 }
 
 - (void)music
 {
+    CPLog.trace(@"music");
+}
+
+- (void)about
+{
+    CPLog.trace(@"about");
+}
+
+- (void)sorry
+{
+    CPLog.trace(@"sorry");
 }
 
 @end
