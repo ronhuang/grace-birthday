@@ -7,6 +7,9 @@
 
 @implementation MainView : CPView
 {
+    CALayer bgLayer;
+    CPImage bgImage;
+
     CPBox detailView;
     CPBox browseView;
 
@@ -29,6 +32,18 @@
     {
         [self setFrame:CGRectMake(0, 0, 627, 455)];
 
+        /* Background */
+        var mainBundle = [CPBundle mainBundle];
+        var path = [mainBundle pathForResource:@"background.bmp"];
+        bgImage = [[CPImage alloc] initWithContentsOfFile:path size:CGSizeMake(627, 455)];
+
+        bgLayer = [CALayer layer];
+        [bgLayer setDelegate:self];
+        [bgLayer setNeedsDisplay];
+        [bgLayer setZPosition:-1.0];
+        [self setWantsLayer:YES];
+        [self setLayer:bgLayer];
+
         /* Frame3, Frame2, Frame1 */
         [self addSubview:[self buildControlView]];
         [self addSubview:[self buildDetailView]];
@@ -36,6 +51,23 @@
     }
 
     return self;
+}
+
+/* Draw background. */
+- (void)drawLayer:(CALayer)aLayer inContext:(CGContext)aContext
+{
+    if ([bgImage loadStatus] != CPImageLoadStatusCompleted)
+        [bgImage setDelegate:self];
+    else
+    {
+        CGContextSetAlpha(aContext, 0.2);
+        CGContextDrawImage(aContext, [aLayer bounds], bgImage);
+    }
+}
+
+- (void)imageDidLoad:(CPImage)anImage
+{
+    [bgLayer setNeedsDisplay];
 }
 
 /* Frame3 */
